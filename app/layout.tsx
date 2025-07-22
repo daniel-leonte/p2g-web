@@ -6,9 +6,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SuperGrok",
-  description: "AI-powered assistant interface",
-    generator: 'v0.dev'
+  title: "Prompt2Go",
+  description: "AI-powered prompt optimization"
 }
 
 export default function RootLayout({

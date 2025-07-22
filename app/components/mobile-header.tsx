@@ -13,11 +13,6 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
       <Button variant="ghost" size="sm" onClick={onMenuClick}>
         <Menu className="w-6 h-6" />
       </Button>
-
-      <div className="flex items-center gap-2">
-        <Lock className="w-4 h-4 text-gray-400" />
-        <span className="text-sm text-gray-400">Private</span>
-      </div>
     </div>
   )
 }
