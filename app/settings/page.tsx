@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
@@ -8,62 +8,82 @@ import { Input } from "@/components/ui/input"
 import { Sidebar } from "../components/sidebar"
 import { MobileHeader } from "../components/mobile-header"
 import { MessageSquare, Key, Eye, EyeOff } from "lucide-react"
+import { useLocalStorage } from "@/hooks/use-local-storage"
+import { Settings, DEFAULT_SETTINGS, validateApiKey } from "@/lib/storage"
+import { useToast } from "@/hooks/use-toast"
 
-// CONSTANTS
-const DEFAULT_PROMPT = `You are a prompt enhancer named PromptTweak, specialized in slightly improving user-provided prompts for software engineering tasks in LLMs like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the refactored prompt, with no additional text, explanations, or analysis.
-
-### Guidelines:
-- **Preserve Intent:** Understand the user's goal in the software engineering context and keep the prompt’s core purpose intact.
-- **Minimal Changes:** Apply 1-3 subtle improvements, such as:
-  - Clarifying vague terms with more specific language, especially around code, algorithms, or systems.
-  - Adding a clear output format (e.g., "in bullet points" or "step-by-step") if none exists.
-  - Specifying tone or style (e.g., "professional" or "concise") if appropriate.
-  - Always including this role at the beginning: "Act as a senior software engineer" for expert context.
-  - Retain all key details, facts, requirements, and constraints from the original to avoid information loss.
-- **Avoid Overhaul:** Do not add complex structures, examples, or chain-of-thought unless the original suggests them.
-- **Efficiency:** Keep the prompt concise with only necessary tweaks.
-- **Customization:** Incorporate user-specified details like target LLM or tone subtly. Default to Claude-compatible optimizations in Cursor for code-focused prompts.
-- **Safety:** Ensure ethical, unbiased prompts with safeguards like promoting secure and efficient code.
-
-### Output Rule:
-- Output only the slightly improved prompt, ready for copy-paste into an LLM.
-- Think internally to identify enhancements, but never include analysis or extra text.
-`
-
-export default function Settings() {
+export default function SettingsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [usingCustomPrompt, setUsingCustomPrompt] = useState(false)
-  const [currentPrompt, setCurrentPrompt] = useState(DEFAULT_PROMPT)
-  const [prefixText, setPrefixText] = useState("")
-  const [suffixText, setSuffixText] = useState("ultrathink")
-  const [geminiKey, setGeminiKey] = useState("")
+  const [settings, setSettings] = useLocalStorage<Settings>('prompt2go-settings', DEFAULT_SETTINGS)
   const [showGeminiKey, setShowGeminiKey] = useState(false)
+  const [isTesting, setIsTesting] = useState(false)
+  const { toast } = useToast()
 
   const handleSaveChanges = () => {
-    console.log("Saving changes:", {
-      usingCustomPrompt,
-      currentPrompt,
-      prefixText,
-      suffixText,
-      geminiKey,
+    if (settings.geminiApiKey && !validateApiKey(settings.geminiApiKey)) {
+      toast({
+        title: "Invalid API Key",
+        description: "Please enter a valid Gemini API key.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    toast({
+      title: "Settings Saved",
+      description: "Your settings have been saved successfully.",
     })
   }
 
   const handleClearAll = () => {
-    setPrefixText("")
-    setSuffixText("")
-    setCurrentPrompt("")
+    setSettings({
+      ...settings,
+      prefixText: "",
+      suffixText: "",
+      customPrompt: "",
+    })
+    
+    toast({
+      title: "Fields Cleared",
+      description: "Text fields have been cleared.",
+    })
   }
 
   const handleUseDefault = () => {
-    setCurrentPrompt(
-      DEFAULT_PROMPT
-    )
+    setSettings({
+      ...settings,
+      customPrompt: DEFAULT_SETTINGS.customPrompt
+    })
   }
 
-  const handleTestApiKey = (provider: string) => {
-    console.log(`Testing ${provider} API key...`)
-    // Add API key testing logic here
+  const handleTestApiKey = async () => {
+    if (!settings.geminiApiKey.trim()) {
+      toast({
+        title: "No API Key",
+        description: "Please enter an API key first.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsTesting(true)
+    
+    // Simple validation - in production, you might want to make a test API call
+    setTimeout(() => {
+      if (validateApiKey(settings.geminiApiKey)) {
+        toast({
+          title: "API Key Valid",
+          description: "Your API key appears to be properly formatted.",
+        })
+      } else {
+        toast({
+          title: "API Key Invalid",
+          description: "Please check your API key format.",
+          variant: "destructive",
+        })
+      }
+      setIsTesting(false)
+    }, 1500)
   }
 
   return (
@@ -131,8 +151,8 @@ export default function Settings() {
                     </div>
                   </div>
                   <Textarea
-                    value={currentPrompt}
-                    onChange={(e) => setCurrentPrompt(e.target.value)}
+                    value={settings.customPrompt}
+                    onChange={(e) => setSettings({ ...settings, customPrompt: e.target.value })}
                     className="min-h-[120px] font-mono text-sm"
                   />
                 </div>
@@ -156,8 +176,8 @@ export default function Settings() {
                   <div>
                     <label className="block text-sm font-medium mb-2">Prefix Text</label>
                     <Textarea
-                      value={prefixText}
-                      onChange={(e) => setPrefixText(e.target.value)}
+                      value={settings.prefixText}
+                      onChange={(e) => setSettings({ ...settings, prefixText: e.target.value })}
                       className="min-h-[100px]"
                       placeholder="Text to add before your prompt..."
                     />
@@ -167,11 +187,11 @@ export default function Settings() {
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <label className="block text-sm font-medium">Suffix Text</label>
-                      <span className="text-xs text-muted-foreground">{suffixText.length}</span>
+                      <span className="text-xs text-muted-foreground">{settings.suffixText.length}</span>
                     </div>
                     <Textarea
-                      value={suffixText}
-                      onChange={(e) => setSuffixText(e.target.value)}
+                      value={settings.suffixText}
+                      onChange={(e) => setSettings({ ...settings, suffixText: e.target.value })}
                       className="min-h-[100px]"
                       placeholder="Text to add after your prompt..."
                     />
@@ -181,7 +201,7 @@ export default function Settings() {
                   <div>
                     <h6 className="font-medium mb-2">Preview</h6>
                     <div className="bg-muted p-4 rounded-2xl font-mono text-sm">
-                      Your prompt here {suffixText}
+                      Your prompt here {settings.suffixText}
                     </div>
                   </div>
                 </div>
@@ -206,8 +226,8 @@ export default function Settings() {
                       <div className="relative flex-1">
                         <Input
                           type={showGeminiKey ? "text" : "password"}
-                          value={geminiKey}
-                          onChange={(e) => setGeminiKey(e.target.value)}
+                          value={settings.geminiApiKey}
+                          onChange={(e) => setSettings({ ...settings, geminiApiKey: e.target.value })}
                           placeholder="YOUR_GEMINI_API_KEY"
                           className="pr-10"
                         />
@@ -223,10 +243,10 @@ export default function Settings() {
                       </div>
                       <Button 
                         variant="outline" 
-                        onClick={() => handleTestApiKey("Gemini")}
-                        disabled={!geminiKey}
+                        onClick={handleTestApiKey}
+                        disabled={!settings.geminiApiKey || isTesting}
                       >
-                        Test
+                        {isTesting ? "Testing..." : "Test"}
                       </Button>
                     </div>
                   </div>
@@ -235,6 +255,16 @@ export default function Settings() {
                     <p className="text-sm text-muted-foreground">
                       <strong>Note:</strong> Your API key is stored locally and never sent to our servers. 
                       It is only used to make direct requests to Google's Gemini API.
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Get your free API key from <a 
+                        href="https://aistudio.google.com/apikey" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Google AI Studio
+                      </a>.
                     </p>
                   </div>
                 </div>
