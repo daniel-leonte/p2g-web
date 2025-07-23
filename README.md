@@ -1,8 +1,8 @@
-# Prompt2Go - LLM Prompt Optimization Tool
+# xyz - LLM Prompt Optimization Tool
 
 A powerful Next.js application designed to optimize, analyze, and enhance your LLM prompts for better AI interactions and superior results.
 
-![Prompt2Go Interface](public/placeholder.jpg)
+![xyz Interface](public/placeholder.jpg)
 
 ## 🚀 Features
 
@@ -58,8 +58,8 @@ A powerful Next.js application designed to optimize, analyze, and enhance your L
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/prompt2go.git
-cd prompt2go
+git clone https://github.com/yourusername/xyz.git
+cd xyz
 
 # Install dependencies
 npm install
@@ -213,10 +213,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Documentation**: Check our [Wiki](https://github.com/yourusername/prompt2go/wiki)
-- **Issues**: Report bugs on [GitHub Issues](https://github.com/yourusername/prompt2go/issues)
-- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/yourusername/prompt2go/discussions)
-- **Email**: Contact us at support@prompt2go.com
+- **Documentation**: Check our [Wiki](https://github.com/yourusername/xyz/wiki)
+- **Issues**: Report bugs on [GitHub Issues](https://github.com/yourusername/xyz/issues)
+- **Discussions**: Join the conversation in [GitHub Discussions](https://github.com/yourusername/xyz/discussions)
+- **Email**: Contact us at support@xyz.com
 
 ---
 

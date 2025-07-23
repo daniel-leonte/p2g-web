@@ -62,9 +62,9 @@ export function Sidebar({ onClose }: SidebarProps) {
       {/* Header */}
       <div className="flex items-center p-4">
         {shouldShowCollapsed ? (
-          <h2 className="text-lg font-bold text-sidebar-foreground mx-auto">P2G</h2>
+          <h2 className="text-lg font-bold text-sidebar-foreground mx-auto">xyz</h2>
         ) : (
-          <h2 className="text-xl font-bold text-sidebar-foreground">Prompt2Go</h2>
+          <h2 className="text-xl font-bold text-sidebar-foreground">xyz</h2>
         )}
       </div>
 
