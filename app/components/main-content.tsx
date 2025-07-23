@@ -35,7 +35,7 @@ export function MainContent() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter your prompt to optimize, analyze, or enhance..."
-              className="w-full h-16 bg-muted border-border rounded-xl px-6 pr-24 text-lg placeholder:text-muted-foreground focus:border-ring resize-none"
+              className="w-full h-16 bg-muted border-border rounded-full px-6 pr-24 text-lg placeholder:text-muted-foreground focus:border-ring resize-none"
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
               <Button size="sm" variant="ghost" className="rounded-full">
@@ -58,7 +58,7 @@ export function MainContent() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               placeholder="Enter your prompt to optimize..."
-              className="w-full h-14 bg-muted border-border rounded-xl px-4 pr-20 placeholder:text-muted-foreground focus:border-ring"
+              className="w-full h-14 bg-muted border-border rounded-full px-4 pr-20 placeholder:text-muted-foreground focus:border-ring"
             />
             <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
               <Button size="sm" variant="ghost" className="rounded-full h-8 w-8">
