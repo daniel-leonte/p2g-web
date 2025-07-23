@@ -5,23 +5,39 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 import { Sidebar } from "../components/sidebar"
 import { MobileHeader } from "../components/mobile-header"
-import { Settings as SettingsIcon, MessageSquare, Key, User, Eye, EyeOff } from "lucide-react"
+import { MessageSquare, Key, Eye, EyeOff } from "lucide-react"
+
+// CONSTANTS
+const DEFAULT_PROMPT = `You are a prompt enhancer named PromptTweak, specialized in slightly improving user-provided prompts for software engineering tasks in LLMs like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the refactored prompt, with no additional text, explanations, or analysis.
+
+### Guidelines:
+- **Preserve Intent:** Understand the user's goal in the software engineering context and keep the prompt’s core purpose intact.
+- **Minimal Changes:** Apply 1-3 subtle improvements, such as:
+  - Clarifying vague terms with more specific language, especially around code, algorithms, or systems.
+  - Adding a clear output format (e.g., "in bullet points" or "step-by-step") if none exists.
+  - Specifying tone or style (e.g., "professional" or "concise") if appropriate.
+  - Always including this role at the beginning: "Act as a senior software engineer" for expert context.
+  - Retain all key details, facts, requirements, and constraints from the original to avoid information loss.
+- **Avoid Overhaul:** Do not add complex structures, examples, or chain-of-thought unless the original suggests them.
+- **Efficiency:** Keep the prompt concise with only necessary tweaks.
+- **Customization:** Incorporate user-specified details like target LLM or tone subtly. Default to Claude-compatible optimizations in Cursor for code-focused prompts.
+- **Safety:** Ensure ethical, unbiased prompts with safeguards like promoting secure and efficient code.
+
+### Output Rule:
+- Output only the slightly improved prompt, ready for copy-paste into an LLM.
+- Think internally to identify enhancements, but never include analysis or extra text.
+`
 
 export default function Settings() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [usingCustomPrompt, setUsingCustomPrompt] = useState(true)
-  const [currentPrompt, setCurrentPrompt] = useState(
-    "You are a prompt enhancer named PromptTweak, designed to slightly improve user-provided prompts for large language models (LLMs) like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to the original prompt to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the"
-  )
+  const [usingCustomPrompt, setUsingCustomPrompt] = useState(false)
+  const [currentPrompt, setCurrentPrompt] = useState(DEFAULT_PROMPT)
   const [prefixText, setPrefixText] = useState("")
   const [suffixText, setSuffixText] = useState("ultrathink")
-  const [openaiKey, setOpenaiKey] = useState("")
-  const [claudeKey, setClaudeKey] = useState("")
-  const [showOpenaiKey, setShowOpenaiKey] = useState(false)
-  const [showClaudeKey, setShowClaudeKey] = useState(false)
+  const [geminiKey, setGeminiKey] = useState("")
+  const [showGeminiKey, setShowGeminiKey] = useState(false)
 
   const handleSaveChanges = () => {
     console.log("Saving changes:", {
@@ -29,8 +45,7 @@ export default function Settings() {
       currentPrompt,
       prefixText,
       suffixText,
-      openaiKey,
-      claudeKey,
+      geminiKey,
     })
   }
 
@@ -42,7 +57,7 @@ export default function Settings() {
 
   const handleUseDefault = () => {
     setCurrentPrompt(
-      "You are a prompt enhancer named PromptTweak, designed to slightly improve user-provided prompts for large language models (LLMs) like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to the original prompt to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the"
+      DEFAULT_PROMPT
     )
   }
 
@@ -178,22 +193,22 @@ export default function Settings() {
               <CardContent className="p-6">
                 <div className="flex items-center gap-3 mb-6">
                   <Key className="w-5 h-5 text-primary" />
-                  <h3 className="text-xl font-semibold">API Keys</h3>
+                  <h3 className="text-xl font-semibold">API Key</h3>
                 </div>
 
-                <p className="text-muted-foreground mb-6">Manage your API keys for different AI providers</p>
+                <p className="text-muted-foreground mb-6">Configure your Google Gemini API key for AI-powered prompt optimization</p>
 
                 <div className="space-y-6">
-                  {/* OpenAI API Key */}
+                  {/* Gemini API Key */}
                   <div>
-                    <label className="block text-sm font-medium mb-2">OpenAI API Key</label>
+                    <label className="block text-sm font-medium mb-2">Google Gemini API Key</label>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Input
-                          type={showOpenaiKey ? "text" : "password"}
-                          value={openaiKey}
-                          onChange={(e) => setOpenaiKey(e.target.value)}
-                          placeholder="sk-..."
+                          type={showGeminiKey ? "text" : "password"}
+                          value={geminiKey}
+                          onChange={(e) => setGeminiKey(e.target.value)}
+                          placeholder="YOUR_GEMINI_API_KEY"
                           className="pr-10"
                         />
                         <Button
@@ -201,47 +216,15 @@ export default function Settings() {
                           variant="ghost"
                           size="sm"
                           className="absolute right-0 top-0 h-full px-3"
-                          onClick={() => setShowOpenaiKey(!showOpenaiKey)}
+                          onClick={() => setShowGeminiKey(!showGeminiKey)}
                         >
-                          {showOpenaiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          {showGeminiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </Button>
                       </div>
                       <Button 
                         variant="outline" 
-                        onClick={() => handleTestApiKey("OpenAI")}
-                        disabled={!openaiKey}
-                      >
-                        Test
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Claude API Key */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Claude API Key</label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          type={showClaudeKey ? "text" : "password"}
-                          value={claudeKey}
-                          onChange={(e) => setClaudeKey(e.target.value)}
-                          placeholder="sk-ant-..."
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3"
-                          onClick={() => setShowClaudeKey(!showClaudeKey)}
-                        >
-                          {showClaudeKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => handleTestApiKey("Claude")}
-                        disabled={!claudeKey}
+                        onClick={() => handleTestApiKey("Gemini")}
+                        disabled={!geminiKey}
                       >
                         Test
                       </Button>
@@ -250,8 +233,8 @@ export default function Settings() {
 
                   <div className="bg-muted p-4 rounded-lg">
                     <p className="text-sm text-muted-foreground">
-                      <strong>Note:</strong> Your API keys are stored locally and never sent to our servers. 
-                      They are only used to make direct requests to the respective AI providers.
+                      <strong>Note:</strong> Your API key is stored locally and never sent to our servers. 
+                      It is only used to make direct requests to Google's Gemini API.
                     </p>
                   </div>
                 </div>
