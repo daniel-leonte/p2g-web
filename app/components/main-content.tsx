@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Zap, FileText, BarChart3, Paperclip, Mic, Loader2 } from "lucide-react"
 import { useGemini } from "@/hooks/use-gemini"
 import { useToast } from "@/hooks/use-toast"
@@ -39,6 +40,19 @@ export function MainContent() {
         description: error,
         variant: "destructive",
       })
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      if (e.shiftKey) {
+        // Allow default behavior (add newline)
+        return
+      } else {
+        // Prevent default newline and trigger optimization
+        e.preventDefault()
+        handleOptimize()
+      }
     }
   }
 
@@ -83,66 +97,30 @@ export function MainContent() {
           Optimize your LLM prompts for better AI interactions and results
         </p>
 
-        {/* Desktop Prompt Input */}
-        <div className="hidden lg:block w-full max-w-4xl mb-8">
-          <div className="relative">
-            <Input
+        {/* Responsive Prompt Input */}
+        <div className="w-full max-w-4xl mb-8">
+          <div className="flex items-start gap-3 lg:gap-4 bg-muted border border-border rounded-2xl lg:rounded-3xl p-3 lg:p-4">
+            <Textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyDown}
               placeholder="Enter your prompt to optimize, analyze, or enhance..."
-              className="w-full h-16 bg-muted border-border rounded-full px-6 pr-24 text-lg placeholder:text-muted-foreground focus:border-ring resize-none"
+              className="flex-1 min-h-8 max-h-32 lg:max-h-40 bg-transparent border-none text-base lg:text-lg placeholder:text-muted-foreground focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
               disabled={isLoading}
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+            <div className="flex items-center gap-1 lg:gap-2 pt-1">
               <Button 
                 size="sm" 
                 variant="ghost" 
-                className="rounded-full"
+                className="rounded-full h-8 w-8 lg:h-10 lg:w-10 shrink-0"
                 onClick={handleOptimize}
                 disabled={isLoading || !prompt.trim()}
               >
                 {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <Loader2 className="w-4 h-4 lg:w-5 lg:h-5 animate-spin" />
                 ) : (
-                  <Sparkles className="w-5 h-5 text-primary" />
+                  <Sparkles className="w-4 h-4 lg:w-5 lg:h-5 text-primary" />
                 )}
-              </Button>
-              <Button size="sm" variant="ghost" className="rounded-full">
-                <Paperclip className="w-5 h-5 text-muted-foreground" />
-              </Button>
-              <Button size="sm" variant="ghost" className="rounded-full">
-                <Mic className="w-5 h-5 text-muted-foreground" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Prompt Input */}
-        <div className="lg:hidden w-full mb-8">
-          <div className="relative">
-            <Input
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Enter your prompt to optimize..."
-              className="w-full h-14 bg-muted border-border rounded-full px-4 pr-20 placeholder:text-muted-foreground focus:border-ring"
-              disabled={isLoading}
-            />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <Button 
-                size="sm" 
-                variant="ghost" 
-                className="rounded-full h-8 w-8"
-                onClick={handleOptimize}
-                disabled={isLoading || !prompt.trim()}
-              >
-                {isLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Sparkles className="w-4 h-4 text-primary" />
-                )}
-              </Button>
-              <Button size="sm" variant="ghost" className="rounded-full h-8 w-8">
-                <Paperclip className="w-4 h-4 text-muted-foreground" />
               </Button>
             </div>
           </div>
