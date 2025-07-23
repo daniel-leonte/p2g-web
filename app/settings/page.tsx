@@ -17,6 +17,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useLocalStorage<Settings>('prompt2go-settings', DEFAULT_SETTINGS)
   const [showGeminiKey, setShowGeminiKey] = useState(false)
   const [isTesting, setIsTesting] = useState(false)
+  const [isPromptExpanded, setIsPromptExpanded] = useState(false)
   const { toast } = useToast()
 
   const handleSaveChanges = () => {
@@ -86,6 +87,26 @@ export default function SettingsPage() {
     }, 1500)
   }
 
+  const handleCopyPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(settings.customPrompt)
+      toast({
+        title: "Copied!",
+        description: "Custom prompt copied to clipboard.",
+      })
+    } catch (err) {
+      toast({
+        title: "Copy Failed",
+        description: "Could not copy to clipboard. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleExpandPrompt = () => {
+    setIsPromptExpanded(!isPromptExpanded)
+  }
+
   return (
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
@@ -139,14 +160,16 @@ export default function SettingsPage() {
                   <div className="flex justify-between items-center">
                     <h5 className="font-medium">Custom Prompt</h5>
                     <div className="flex gap-2 text-sm">
-                      <Button variant="ghost" size="sm" className="text-primary">Copy</Button>
-                      <Button variant="ghost" size="sm" className="text-primary">Expand</Button>
+                      <Button variant="ghost" size="sm" className="text-primary" onClick={handleCopyPrompt}>Copy</Button>
+                      <Button variant="ghost" size="sm" className="text-primary" onClick={handleExpandPrompt}>
+                        {isPromptExpanded ? "Collapse" : "Expand"}
+                      </Button>
                     </div>
                   </div>
                   <Textarea
                     value={settings.customPrompt}
                     onChange={(e) => setSettings({ ...settings, customPrompt: e.target.value })}
-                    className="min-h-[120px] font-mono text-sm"
+                    className={`${isPromptExpanded ? "min-h-[300px]" : "min-h-[120px]"} font-mono text-sm transition-all duration-200`}
                     placeholder="Enter your custom optimization prompt..."
                   />
                   <p className="text-xs text-muted-foreground">
