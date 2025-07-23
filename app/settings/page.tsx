@@ -126,25 +126,18 @@ export default function SettingsPage() {
                   <h3 className="text-xl font-semibold">System Prompt</h3>
                 </div>
 
-                {/* Custom Prompt Toggle */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <div>
-                      <h4 className="font-medium">Using Custom Prompt</h4>
-                      <p className="text-sm text-muted-foreground">Controls how AI optimizes your prompts</p>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">Edit</Button>
-                    <Button variant="outline" size="sm" onClick={handleUseDefault}>Use Default</Button>
-                  </div>
+                <p className="text-muted-foreground mb-6">Configure how AI optimizes your prompts</p>
+
+                {/* Action Buttons */}
+                <div className="flex gap-2 mb-4">
+                  <Button variant="outline" size="sm">Edit</Button>
+                  <Button variant="outline" size="sm" onClick={handleUseDefault}>Use Default</Button>
                 </div>
 
                 {/* Current Prompt */}
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <h5 className="font-medium">Current Prompt</h5>
+                    <h5 className="font-medium">Custom Prompt</h5>
                     <div className="flex gap-2 text-sm">
                       <Button variant="ghost" size="sm" className="text-primary">Copy</Button>
                       <Button variant="ghost" size="sm" className="text-primary">Expand</Button>
@@ -154,7 +147,11 @@ export default function SettingsPage() {
                     value={settings.customPrompt}
                     onChange={(e) => setSettings({ ...settings, customPrompt: e.target.value })}
                     className="min-h-[120px] font-mono text-sm"
+                    placeholder="Enter your custom optimization prompt..."
                   />
+                  <p className="text-xs text-muted-foreground">
+                    This prompt will be used for all optimizations. Character count: {settings.customPrompt.length}
+                  </p>
                 </div>
               </CardContent>
             </Card>

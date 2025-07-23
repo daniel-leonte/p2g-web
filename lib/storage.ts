@@ -3,7 +3,6 @@ export interface Settings {
   customPrompt: string
   prefixText: string
   suffixText: string
-  usingCustomPrompt: boolean
 }
 
 export const DEFAULT_PROMPT = `You are a prompt enhancer named PromptTweak, specialized in slightly improving user-provided prompts for software engineering tasks in LLMs like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the refactored prompt, with no additional text, explanations, or analysis.
@@ -31,7 +30,6 @@ export const DEFAULT_SETTINGS: Settings = {
   customPrompt: DEFAULT_PROMPT,
   prefixText: '',
   suffixText: 'ultrathink',
-  usingCustomPrompt: false,
 }
 
 export const STORAGE_KEY = 'prompt2go-settings'

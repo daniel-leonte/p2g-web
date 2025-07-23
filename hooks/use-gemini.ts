@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { optimizePrompt, OptimizationRequest, OptimizationResult } from '@/lib/gemini'
-import { loadSettings } from '@/lib/storage'
+import { loadSettings, DEFAULT_PROMPT } from '@/lib/storage'
 
 interface UseGeminiReturn {
   optimize: (prompt: string) => Promise<OptimizationResult | null>
@@ -32,7 +32,7 @@ export function useGemini(): UseGeminiReturn {
     try {
       const request: OptimizationRequest = {
         originalPrompt: prompt,
-        systemPrompt: settings.usingCustomPrompt ? settings.customPrompt : undefined,
+        systemPrompt: settings.customPrompt || DEFAULT_PROMPT,
         prefixText: settings.prefixText || undefined,
         suffixText: settings.suffixText || undefined,
       }
