@@ -128,19 +128,19 @@ export function MainContent() {
 
         {/* Optimization Result */}
         {result && (
-          <div className="w-full max-w-4xl mb-8 p-6 bg-card border border-border rounded-lg">
+          <div className="w-full max-w-4xl mb-8 p-6 bg-card border border-border rounded-2xl lg:rounded-3xl">
             <div className="flex items-center gap-2 mb-4">
               <Sparkles className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Optimized Prompt</h3>
             </div>
             
             <div className="space-y-4">
-              <div className="bg-muted p-4 rounded-lg">
+              <div className="bg-muted p-4 rounded-2xl lg:rounded-3xl">
                 <p className="text-sm font-medium text-muted-foreground mb-2">Original:</p>
                 <p className="text-sm">{result.originalPrompt}</p>
               </div>
               
-              <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
+              <div className="bg-primary/5 p-4 rounded-2xl lg:rounded-3xl border border-primary/20">
                 <p className="text-sm font-medium text-primary mb-2">Optimized:</p>
                 <p className="text-sm">{result.optimizedPrompt}</p>
               </div>
