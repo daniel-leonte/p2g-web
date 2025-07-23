@@ -19,6 +19,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var collapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+                  document.documentElement.setAttribute('data-sidebar-collapsed', collapsed);
+                } catch (e) {
+                  document.documentElement.setAttribute('data-sidebar-collapsed', 'false');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
