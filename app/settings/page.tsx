@@ -4,26 +4,24 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Sidebar } from "../components/sidebar"
 import { MobileHeader } from "../components/mobile-header"
-import { Settings as SettingsIcon, MessageSquare, Key, User } from "lucide-react"
+import { Settings as SettingsIcon, MessageSquare, Key, User, Eye, EyeOff } from "lucide-react"
 
 export default function Settings() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState("prompts")
   const [usingCustomPrompt, setUsingCustomPrompt] = useState(true)
   const [currentPrompt, setCurrentPrompt] = useState(
     "You are a prompt enhancer named PromptTweak, designed to slightly improve user-provided prompts for large language models (LLMs) like ChatGPT, Claude, or Gemini. Your goal is to make small, effective adjustments to the original prompt to enhance clarity, specificity, and output quality while keeping changes minimal and preserving the original structure and intent. Output only the"
   )
   const [prefixText, setPrefixText] = useState("")
   const [suffixText, setSuffixText] = useState("ultrathink")
-
-  const settingsNavigation = [
-    { id: "general", name: "General", icon: SettingsIcon },
-    { id: "prompts", name: "Prompts", icon: MessageSquare },
-    { id: "api", name: "API Keys", icon: Key },
-  ]
+  const [openaiKey, setOpenaiKey] = useState("")
+  const [claudeKey, setClaudeKey] = useState("")
+  const [showOpenaiKey, setShowOpenaiKey] = useState(false)
+  const [showClaudeKey, setShowClaudeKey] = useState(false)
 
   const handleSaveChanges = () => {
     console.log("Saving changes:", {
@@ -31,6 +29,8 @@ export default function Settings() {
       currentPrompt,
       prefixText,
       suffixText,
+      openaiKey,
+      claudeKey,
     })
   }
 
@@ -46,45 +46,41 @@ export default function Settings() {
     )
   }
 
-  const renderSettingsContent = () => {
-    switch (activeSection) {
-      case "general":
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">General Settings</h2>
-              <p className="text-muted-foreground">Configure general application preferences</p>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">General settings coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        )
-      
-      case "api":
-        return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">API Keys</h2>
-              <p className="text-muted-foreground">Manage your API keys and integrations</p>
-            </div>
-            <Card>
-              <CardContent className="p-6">
-                <p className="text-muted-foreground">API key management coming soon...</p>
-              </CardContent>
-            </Card>
-          </div>
-        )
+  const handleTestApiKey = (provider: string) => {
+    console.log(`Testing ${provider} API key...`)
+    // Add API key testing logic here
+  }
 
-      case "prompts":
-      default:
-        return (
+  return (
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-80 h-full">
+            <Sidebar onClose={() => setSidebarOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className="lg:hidden">
+          <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-6 lg:p-8">
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-bold text-foreground mb-2">Prompts Settings</h2>
-              <p className="text-muted-foreground">Configure how AI optimizes your prompts</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Settings</h2>
+              <p className="text-muted-foreground">Configure Prompt2Go for your workflow</p>
             </div>
 
             {/* System Prompt Section */}
@@ -177,83 +173,96 @@ export default function Settings() {
               </CardContent>
             </Card>
 
+            {/* API Keys Section */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <Key className="w-5 h-5 text-primary" />
+                  <h3 className="text-xl font-semibold">API Keys</h3>
+                </div>
+
+                <p className="text-muted-foreground mb-6">Manage your API keys for different AI providers</p>
+
+                <div className="space-y-6">
+                  {/* OpenAI API Key */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">OpenAI API Key</label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type={showOpenaiKey ? "text" : "password"}
+                          value={openaiKey}
+                          onChange={(e) => setOpenaiKey(e.target.value)}
+                          placeholder="sk-..."
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3"
+                          onClick={() => setShowOpenaiKey(!showOpenaiKey)}
+                        >
+                          {showOpenaiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => handleTestApiKey("OpenAI")}
+                        disabled={!openaiKey}
+                      >
+                        Test
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Claude API Key */}
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Claude API Key</label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input
+                          type={showClaudeKey ? "text" : "password"}
+                          value={claudeKey}
+                          onChange={(e) => setClaudeKey(e.target.value)}
+                          placeholder="sk-ant-..."
+                          className="pr-10"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3"
+                          onClick={() => setShowClaudeKey(!showClaudeKey)}
+                        >
+                          {showClaudeKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </Button>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        onClick={() => handleTestApiKey("Claude")}
+                        disabled={!claudeKey}
+                      >
+                        Test
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="bg-muted p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      <strong>Note:</strong> Your API keys are stored locally and never sent to our servers. 
+                      They are only used to make direct requests to the respective AI providers.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Action Buttons */}
             <div className="flex gap-3">
               <Button onClick={handleSaveChanges}>Save Changes</Button>
               <Button variant="outline" onClick={handleClearAll}>Clear All</Button>
             </div>
-          </div>
-        )
-    }
-  }
-
-  return (
-    <div className="flex h-screen bg-background">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar />
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {sidebarOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <div className="relative w-80 h-full">
-            <Sidebar onClose={() => setSidebarOpen(false)} />
-          </div>
-        </div>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 flex min-w-0">
-        {/* Settings Navigation Sidebar */}
-        <div className="w-80 bg-sidebar border-r border-sidebar-border flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b border-sidebar-border">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <SettingsIcon className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-sidebar-foreground">Settings</h2>
-                <p className="text-sm text-muted-foreground">Customize Prompt2Go for your workflow</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <div className="flex-1 p-4 space-y-2">
-            {settingsNavigation.map((item) => {
-              const isActive = activeSection === item.id
-              return (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`w-full justify-start gap-3 h-10 rounded-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
-                    isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
-                  }`}
-                  onClick={() => setActiveSection(item.id)}
-                >
-                  <item.icon className={`w-4 h-4 ${isActive ? 'text-sidebar-accent-foreground' : 'text-muted-foreground'}`} />
-                  <span className={`${isActive ? 'text-sidebar-accent-foreground font-medium' : 'text-sidebar-foreground'}`}>
-                    {item.name}
-                  </span>
-                </Button>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Settings Content */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Mobile Header */}
-          <div className="lg:hidden">
-            <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 lg:p-8">
-            {renderSettingsContent()}
           </div>
         </div>
       </div>
