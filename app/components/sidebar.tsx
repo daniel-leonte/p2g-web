@@ -1,78 +1,83 @@
 "use client"
 
 import { useState } from "react"
-import {
-  Sparkles,
-  ChevronDown,
-  Code,
-  Plus,
-  RefreshCw,
-  Globe,
-  Gamepad2,
-  Settings,
-} from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { 
+  Sparkles, 
+  FileText, 
+  Zap, 
+  History, 
+  BookOpen, 
+  ChevronDown, 
+  Settings 
+} from "lucide-react"
 
 interface SidebarProps {
   onClose?: () => void
 }
 
 export function Sidebar({ onClose }: SidebarProps) {
-  const [isProjectsExpanded, setIsProjectsExpanded] = useState(false)
+  const [isPromptLibraryExpanded, setIsPromptLibraryExpanded] = useState(false)
   
-  const projects = [
-    { name: "Resume Builder", icon: Code, color: "text-yellow-400" },
-    { name: "New Project", icon: Plus, color: "text-blue-400" },
-    { name: "New Workspace", icon: RefreshCw, color: "text-cyan-400" },
-    { name: "AI agent", icon: Globe, color: "text-yellow-400" },
-    { name: "SWE", icon: Gamepad2, color: "text-cyan-400" },
+  const promptCategories = [
+    { name: "Writing & Content", icon: FileText, color: "text-chart-1" },
+    { name: "Code Generation", icon: Zap, color: "text-chart-2" },
+    { name: "Data Analysis", icon: BookOpen, color: "text-chart-3" },
+    { name: "Creative Tasks", icon: Sparkles, color: "text-chart-4" },
+    { name: "Business & Strategy", icon: FileText, color: "text-chart-5" },
   ]
 
   return (
-    <div className="w-80 h-full bg-gray-900 border-r border-gray-800 flex flex-col">
+    <div className="w-80 h-full bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4">
-        <h2 className="text-xl font-bold text-white">Prompt2Go</h2>
+        <h2 className="text-xl font-bold text-sidebar-foreground">Prompt2Go</h2>
       </div>
 
       {/* Navigation */}
       <div className="flex-1 px-4 space-y-2">
         {/* Prompt Optimization */}
-        <Button variant="ghost" className="w-full justify-start gap-3 h-10 rounded-full hover:bg-gray-800">
-          <Sparkles className="w-5 h-5 text-gray-400" />
-          <span className="text-gray-300">Prompt Optimization</span>
+        <Button variant="ghost" className="w-full justify-start gap-3 h-10 rounded-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+          <Sparkles className="w-5 h-5 text-muted-foreground" />
+          <span className="text-sidebar-foreground">Optimize Prompt</span>
         </Button>
 
-        {/* Projects Section */}
+        {/* Prompt History */}
+        <Button variant="ghost" className="w-full justify-start gap-3 h-10 rounded-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+          <History className="w-5 h-5 text-muted-foreground" />
+          <span className="text-sidebar-foreground">Recent Prompts</span>
+        </Button>
+
+        {/* Prompt Library Section */}
         <div>
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-3 h-10 rounded-full hover:bg-gray-800"
-            onClick={() => setIsProjectsExpanded(!isProjectsExpanded)}
+            className="w-full justify-start gap-3 h-10 rounded-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            onClick={() => setIsPromptLibraryExpanded(!isPromptLibraryExpanded)}
           >
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isProjectsExpanded ? '' : '-rotate-90'}`} />
-            <span className="text-gray-300 font-medium">Projects</span>
+            <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${isPromptLibraryExpanded ? '' : '-rotate-90'}`} />
+            <span className="text-sidebar-foreground font-medium">Prompt Library</span>
           </Button>
 
-          {isProjectsExpanded && (
+          {isPromptLibraryExpanded && (
             <div className="ml-4 mt-2 space-y-1">
-              {projects.map((project, index) => (
-                <Button key={index} variant="ghost" className="w-full justify-start gap-3 h-10 hover:bg-gray-800">
-                  <project.icon className={`w-4 h-4 ${project.color}`} />
-                  <span className="text-gray-300 text-sm">{project.name}</span>
+              {promptCategories.map((category, index) => (
+                <Button key={index} variant="ghost" className="w-full justify-start gap-3 h-10 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                  <category.icon className={`w-4 h-4 ${category.color}`} />
+                  <span className="text-sidebar-foreground text-sm">{category.name}</span>
                 </Button>
               ))}
-              <Button variant="ghost" className="w-full justify-start h-8 hover:bg-gray-800">
-                <span className="text-gray-400 text-sm">See all</span>
+              <Button variant="ghost" className="w-full justify-start h-8 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+                <span className="text-muted-foreground text-sm">Browse all</span>
               </Button>
             </div>
           )}
         </div>
 
         {/* Settings */}
-        <Button variant="ghost" className="w-full justify-start gap-3 h-10 rounded-full hover:bg-gray-800">
-          <Settings className="w-4 h-4 text-gray-400" />
-          <span className="text-gray-300 font-medium">Settings</span>
+        <Button variant="ghost" className="w-full justify-start gap-3 h-10 rounded-full hover:bg-sidebar-accent hover:text-sidebar-accent-foreground">
+          <Settings className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sidebar-foreground font-medium">Settings</span>
         </Button>
         
       </div>
