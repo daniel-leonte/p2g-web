@@ -89,7 +89,7 @@ export function MainContent() {
               <div className="absolute top-2 left-2 w-2 h-4 bg-primary-foreground transform rotate-45" />
             </div>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-bold text-foreground">xyz</h1>
+          <h1 className="text-4xl lg:text-5xl font-bold text-foreground">Prompt2Go</h1>
         </div>
 
         {/* Subtitle */}

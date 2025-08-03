@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Tailwind CSS Configuration for xyz
+ * Tailwind CSS Configuration for Prompt2Go
  * 
  * This configuration uses OKLCH color space with a fixed dark theme
  * optimized for LLM prompt optimization workflows. The dark theme

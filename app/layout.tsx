@@ -8,7 +8,7 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "xyz - LLM Prompt Optimization Tool",
+  title: "Prompt2Go - LLM Prompt Optimization Tool",
   description: "Optimize, analyze, and enhance your LLM prompts for better AI interactions"
 }
 

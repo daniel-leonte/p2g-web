@@ -136,7 +136,7 @@ export default function SettingsPage() {
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Settings</h2>
-              <p className="text-muted-foreground">Configure xyz for your workflow</p>
+              <p className="text-muted-foreground">Configure Prompt2Go for your workflow</p>
             </div>
 
             {/* System Prompt Section */}
