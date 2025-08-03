@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { optimizePrompt, OptimizationRequest, OptimizationResult } from '@/lib/gemini'
+import { OptimizationRequest, OptimizationResult } from '@/lib/gemini'
 import { loadSettings, DEFAULT_PROMPT } from '@/lib/storage'
 
 interface UseGeminiReturn {
@@ -20,11 +20,6 @@ export function useGemini(): UseGeminiReturn {
     }
 
     const settings = loadSettings()
-    
-    if (!settings.geminiApiKey.trim()) {
-      setError('Gemini API key not configured. Please add your API key in Settings.')
-      return null
-    }
 
     setIsLoading(true)
     setError(null)
@@ -37,7 +32,20 @@ export function useGemini(): UseGeminiReturn {
         suffixText: settings.suffixText || undefined,
       }
 
-      const result = await optimizePrompt(settings.geminiApiKey, request)
+      const response = await fetch('/api/optimize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to optimize prompt')
+      }
+
+      const result: OptimizationResult = await response.json()
       return result
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unexpected error occurred'

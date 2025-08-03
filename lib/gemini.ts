@@ -14,21 +14,25 @@ export interface OptimizationResult {
 }
 
 export async function optimizePrompt(
-  apiKey: string,
   request: OptimizationRequest
 ): Promise<OptimizationResult> {
-  if (!apiKey?.trim()) {
-    throw new Error('API key is required')
-  }
-
   if (!request.originalPrompt?.trim()) {
     throw new Error('Prompt is required')
   }
 
+  // Validate environment variable
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  if (!apiKey?.trim()) {
+    console.error('Environment variable GOOGLE_GENERATIVE_AI_API_KEY is not set or empty')
+    throw new Error('Google Generative AI API key not configured. Please set GOOGLE_GENERATIVE_AI_API_KEY environment variable.')
+  }
+
   try {
-    // Create a Google AI instance with the API key
-    const google = createGoogleGenerativeAI({ apiKey })
-    const model = google('gemini-2.0-flash-exp')
+    // Create a Google Generative AI instance
+    const google = createGoogleGenerativeAI({
+      apiKey: apiKey,
+    })
+    const model = google('gemini-1.5-flash')
     
     // Build the full prompt with prefix/suffix if provided
     const fullPrompt = [
@@ -50,16 +54,24 @@ export async function optimizePrompt(
       originalPrompt: request.originalPrompt
     }
   } catch (error) {
-    console.error('Gemini API Error:', error)
+    console.error('Google Generative AI Error:', error)
     
     if (error instanceof Error) {
-      if (error.message.includes('API key')) {
-        throw new Error('Invalid API key. Please check your Gemini API key in Settings.')
+      const errorMessage = error.message.toLowerCase()
+      
+      if (errorMessage.includes('api key') || errorMessage.includes('authentication') || errorMessage.includes('unauthorized')) {
+        throw new Error('Invalid API key. Please check your GOOGLE_GENERATIVE_AI_API_KEY environment variable.')
       }
-      if (error.message.includes('quota') || error.message.includes('rate limit')) {
+      if (errorMessage.includes('generative language api has not been used') || errorMessage.includes('service_disabled')) {
+        throw new Error('Google Generative Language API is not enabled. Please enable it in Google Cloud Console and try again.')
+      }
+      if (errorMessage.includes('billing') || errorMessage.includes('payment')) {
+        throw new Error('Billing issue detected. Please check your Google Cloud billing settings.')
+      }
+      if (errorMessage.includes('quota') || errorMessage.includes('rate limit')) {
         throw new Error('API rate limit exceeded. Please try again later.')
       }
-      if (error.message.includes('network') || error.message.includes('fetch')) {
+      if (errorMessage.includes('network') || errorMessage.includes('fetch')) {
         throw new Error('Network error. Please check your connection and try again.')
       }
     }

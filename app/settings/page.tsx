@@ -7,29 +7,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { Sidebar } from "../components/sidebar"
 import { MobileHeader } from "../components/mobile-header"
-import { MessageSquare, Key, Eye, EyeOff } from "lucide-react"
+import { MessageSquare } from "lucide-react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
-import { Settings, DEFAULT_SETTINGS, validateApiKey } from "@/lib/storage"
+import { Settings, DEFAULT_SETTINGS } from "@/lib/storage"
 import { useToast } from "@/hooks/use-toast"
 
 export default function SettingsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [settings, setSettings] = useLocalStorage<Settings>('prompt2go-settings', DEFAULT_SETTINGS)
-  const [showGeminiKey, setShowGeminiKey] = useState(false)
-  const [isTesting, setIsTesting] = useState(false)
   const [isPromptExpanded, setIsPromptExpanded] = useState(false)
   const { toast } = useToast()
 
   const handleSaveChanges = () => {
-    if (settings.geminiApiKey && !validateApiKey(settings.geminiApiKey)) {
-      toast({
-        title: "Invalid API Key",
-        description: "Please enter a valid Gemini API key.",
-        variant: "destructive",
-      })
-      return
-    }
-
     toast({
       title: "Settings Saved",
       description: "Your settings have been saved successfully.",
@@ -57,35 +46,6 @@ export default function SettingsPage() {
     })
   }
 
-  const handleTestApiKey = async () => {
-    if (!settings.geminiApiKey.trim()) {
-      toast({
-        title: "No API Key",
-        description: "Please enter an API key first.",
-        variant: "destructive",
-      })
-      return
-    }
-
-    setIsTesting(true)
-    
-    // Simple validation - in production, you might want to make a test API call
-    setTimeout(() => {
-      if (validateApiKey(settings.geminiApiKey)) {
-        toast({
-          title: "API Key Valid",
-          description: "Your API key appears to be properly formatted.",
-        })
-      } else {
-        toast({
-          title: "API Key Invalid",
-          description: "Please check your API key format.",
-          variant: "destructive",
-        })
-      }
-      setIsTesting(false)
-    }, 1500)
-  }
 
   const handleCopyPrompt = async () => {
     try {
@@ -228,68 +188,6 @@ export default function SettingsPage() {
               </CardContent>
             </Card>
 
-            {/* API Keys Section */}
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <Key className="w-5 h-5 text-primary" />
-                  <h3 className="text-xl font-semibold">API Key</h3>
-                </div>
-
-                <p className="text-muted-foreground mb-6">Configure your Google Gemini API key for AI-powered prompt optimization</p>
-
-                <div className="space-y-6">
-                  {/* Gemini API Key */}
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Google Gemini API Key</label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input
-                          type={showGeminiKey ? "text" : "password"}
-                          value={settings.geminiApiKey}
-                          onChange={(e) => setSettings({ ...settings, geminiApiKey: e.target.value })}
-                          placeholder="YOUR_GEMINI_API_KEY"
-                          className="pr-10"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="absolute right-0 top-0 h-full px-3"
-                          onClick={() => setShowGeminiKey(!showGeminiKey)}
-                        >
-                          {showGeminiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        onClick={handleTestApiKey}
-                        disabled={!settings.geminiApiKey || isTesting}
-                      >
-                        {isTesting ? "Testing..." : "Test"}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="bg-muted p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Note:</strong> Your API key is stored locally and never sent to our servers. 
-                      It is only used to make direct requests to Google's Gemini API.
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Get your free API key from <a 
-                        href="https://aistudio.google.com/apikey" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        Google AI Studio
-                      </a>.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Action Buttons */}
             <div className="flex gap-3">

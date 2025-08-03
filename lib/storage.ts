@@ -1,5 +1,4 @@
 export interface Settings {
-  geminiApiKey: string
   customPrompt: string
   prefixText: string
   suffixText: string
@@ -28,7 +27,6 @@ export const DEFAULT_PROMPT = `You are a prompt enhancer named PromptTweak, spec
 `
 
 export const DEFAULT_SETTINGS: Settings = {
-  geminiApiKey: '',
   customPrompt: DEFAULT_PROMPT,
   prefixText: '',
   suffixText: 'ultrathink',
@@ -56,6 +54,44 @@ export function saveSettings(settings: Settings): void {
   }
 }
 
-export function validateApiKey(key: string): boolean {
-  return key.trim().length > 0
+export function validateApiKey(): boolean {
+  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+  return !!(apiKey && apiKey.trim().length > 0)
+}
+
+export function getEnvironmentStatus(): {
+  isConfigured: boolean
+  apiKeyLength: number
+  error?: string
+} {
+  try {
+    const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
+    
+    if (!apiKey) {
+      return {
+        isConfigured: false,
+        apiKeyLength: 0,
+        error: 'GOOGLE_GENERATIVE_AI_API_KEY environment variable is not set'
+      }
+    }
+    
+    if (!apiKey.trim()) {
+      return {
+        isConfigured: false,
+        apiKeyLength: 0,
+        error: 'GOOGLE_GENERATIVE_AI_API_KEY environment variable is empty'
+      }
+    }
+    
+    return {
+      isConfigured: true,
+      apiKeyLength: apiKey.length
+    }
+  } catch (error) {
+    return {
+      isConfigured: false,
+      apiKeyLength: 0,
+      error: `Error checking environment: ${error}`
+    }
+  }
 } 
