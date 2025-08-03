@@ -160,69 +160,6 @@ export function MainContent() {
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 w-full max-w-4xl">
-          {[
-            { 
-              icon: Sparkles, 
-              label: "Optimize Prompt", 
-              description: "Enhance clarity & effectiveness",
-              color: "text-primary",
-              onClick: handleOptimize,
-              disabled: isLoading || !prompt.trim()
-            },
-            { 
-              icon: BarChart3, 
-              label: "Analyze Performance", 
-              description: "Evaluate prompt quality",
-              color: "text-chart-2",
-              onClick: () => {},
-              disabled: true
-            },
-            { 
-              icon: Zap, 
-              label: "Generate Variations", 
-              description: "Create alternative versions",
-              color: "text-chart-3",
-              onClick: () => {},
-              disabled: true
-            },
-            { 
-              icon: FileText, 
-              label: "Template Library", 
-              description: "Browse proven prompts",
-              color: "text-chart-4",
-              onClick: () => {},
-              disabled: true
-            },
-          ].map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              className="h-24 lg:h-28 flex flex-col gap-2 bg-card hover:bg-accent hover:text-accent-foreground border-border group transition-all duration-200 disabled:opacity-50"
-              onClick={action.onClick}
-              disabled={action.disabled}
-            >
-              {action.icon === Sparkles && isLoading ? (
-                <Loader2 className="w-6 h-6 lg:w-7 lg:h-7 animate-spin" />
-              ) : (
-                <action.icon className={`w-6 h-6 lg:w-7 lg:h-7 ${action.color} group-hover:scale-110 transition-transform`} />
-              )}
-              <div className="text-center">
-                <div className="text-sm lg:text-base font-medium text-card-foreground">{action.label}</div>
-                <div className="text-xs text-muted-foreground hidden lg:block">{action.description}</div>
-              </div>
-            </Button>
-          ))}
-        </div>
-
-        {/* Features Info */}
-        <div className="mt-12 text-center text-sm text-muted-foreground max-w-2xl">
-          <p>
-            Analyze prompt structure • Improve response quality • Track performance metrics • 
-            Build template library • Export optimized prompts
-          </p>
-        </div>
       </div>
     </div>
   )
