@@ -34,23 +34,24 @@ export async function optimizePrompt(
     })
     const model = google('gemini-1.5-flash')
     
-    // Build the full prompt with prefix/suffix if provided
-    const fullPrompt = [
-      request.prefixText,
-      request.originalPrompt,
-      request.suffixText
-    ].filter(Boolean).join('\n\n')
-
+    // Send only the core prompt to AI for optimization
     const { text } = await generateText({
       model,
       system: request.systemPrompt,
-      prompt: fullPrompt,
+      prompt: request.originalPrompt,
       temperature: 0.3,
       maxTokens: 1500,
     })
 
+    // Build final result with prefix/suffix appended to optimized prompt
+    const optimizedWithContext = [
+      request.prefixText,
+      text.trim(),
+      request.suffixText
+    ].filter(Boolean).join('\n\n')
+
     return {
-      optimizedPrompt: text.trim(),
+      optimizedPrompt: optimizedWithContext,
       originalPrompt: request.originalPrompt
     }
   } catch (error) {

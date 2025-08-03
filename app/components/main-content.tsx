@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import React from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Sparkles, Zap, FileText, BarChart3, Paperclip, Mic, Loader2 } from "lucide-react"
+import { Sparkles, Loader2 } from "lucide-react"
 import { useGemini } from "@/hooks/use-gemini"
 import { useToast } from "@/hooks/use-toast"
+import { useLocalStorage } from "@/hooks/use-local-storage"
 import { OptimizationResult } from "@/lib/gemini"
 
 export function MainContent() {
-  const [prompt, setPrompt] = useState("")
-  const [result, setResult] = useState<OptimizationResult | null>(null)
+  const [prompt, setPrompt] = useLocalStorage('prompt2go-current-prompt', "")
+  const [result, setResult] = useLocalStorage<OptimizationResult | null>('prompt2go-optimization-result', null)
   const { optimize, isLoading, error, clearError } = useGemini()
   const { toast } = useToast()
 
@@ -25,6 +25,8 @@ export function MainContent() {
       return
     }
 
+    // Clear previous result before new optimization
+    setResult(null)
     clearError()
     const optimizationResult = await optimize(prompt)
     
@@ -51,6 +53,8 @@ export function MainContent() {
       } else {
         // Prevent default newline and trigger optimization
         e.preventDefault()
+        // Clear previous result before new optimization
+        setResult(null)
         handleOptimize()
       }
     }
@@ -66,16 +70,6 @@ export function MainContent() {
     }
   }
 
-  const handleUseOptimized = () => {
-    if (result) {
-      setPrompt(result.optimizedPrompt)
-      setResult(null)
-      toast({
-        title: "Prompt Updated",
-        description: "Using the optimized prompt as your new input.",
-      })
-    }
-  }
 
   return (
     <div className="flex-1 flex flex-col">
@@ -148,9 +142,6 @@ export function MainContent() {
               <div className="flex gap-2">
                 <Button size="sm" onClick={handleCopyOptimized}>
                   Copy Optimized
-                </Button>
-                <Button size="sm" variant="outline" onClick={handleUseOptimized}>
-                  Use This Prompt
                 </Button>
                 <Button size="sm" variant="ghost" onClick={() => setResult(null)}>
                   Close

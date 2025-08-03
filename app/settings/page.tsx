@@ -181,7 +181,9 @@ export default function SettingsPage() {
                   <div>
                     <h6 className="font-medium mb-2">Preview</h6>
                     <div className="bg-muted p-4 rounded-2xl font-mono text-sm">
-                      Your prompt here {settings.suffixText}
+                      {settings.prefixText && <><span className="text-blue-400">{settings.prefixText}</span><br /><br /></>}
+                      <span className="text-muted-foreground">[Your optimized prompt will appear here]</span>
+                      {settings.suffixText && <><br /><br /><span className="text-green-400">{settings.suffixText}</span></>}
                     </div>
                   </div>
                 </div>
