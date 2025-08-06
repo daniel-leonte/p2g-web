@@ -6,12 +6,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, Loader2 } from "lucide-react"
 import { useGemini } from "@/hooks/use-gemini"
 import { useToast } from "@/hooks/use-toast"
-import { useLocalStorage } from "@/hooks/use-local-storage"
+import { useSessionStorage } from "@/hooks/use-session-storage"
 import { OptimizationResult } from "@/lib/gemini"
 
 export function MainContent() {
-  const [prompt, setPrompt] = useLocalStorage('prompt2go-current-prompt', "")
-  const [result, setResult] = useLocalStorage<OptimizationResult | null>('prompt2go-optimization-result', null)
+  const [prompt, setPrompt] = useSessionStorage('prompt2go-current-prompt', "")
+  const [result, setResult] = useSessionStorage<OptimizationResult | null>('prompt2go-optimization-result', null)
   const { optimize, isLoading, error, clearError } = useGemini()
   const { toast } = useToast()
 

@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Approach
 
-**This is a prototype project - keep it simple:**
+**This is a prototype/MVP project - keep it simple:**
 - Use existing patterns and components
 - Prefer simple solutions over complex ones
 - Focus on core functionality, avoid over-engineering
