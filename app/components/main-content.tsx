@@ -1,19 +1,35 @@
 "use client"
 
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Sparkles, Loader2 } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Sparkles, Loader2, FolderOpen } from "lucide-react"
 import { useGemini } from "@/hooks/use-gemini"
 import { useToast } from "@/hooks/use-toast"
 import { useSessionStorage } from "@/hooks/use-session-storage"
 import { OptimizationResult } from "@/lib/gemini"
+import { Project } from "@/lib/storage"
 
 export function MainContent() {
   const [prompt, setPrompt] = useSessionStorage('prompt2go-current-prompt', "")
   const [result, setResult] = useSessionStorage<OptimizationResult | null>('prompt2go-optimization-result', null)
+  const [projects, setProjects] = useState<Project[]>([])
+  const [selectedProjectId, setSelectedProjectId] = useSessionStorage<string>('prompt2go-selected-project', '')
   const { optimize, isLoading, error, clearError } = useGemini()
   const { toast } = useToast()
+
+  // Load projects from localStorage
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('p2g-projects')
+      if (stored) {
+        setProjects(JSON.parse(stored))
+      }
+    } catch (error) {
+      console.error('Failed to load projects:', error)
+    }
+  }, [])
 
   const handleOptimize = async () => {
     if (!prompt.trim()) {
@@ -25,17 +41,18 @@ export function MainContent() {
       return
     }
 
+    // Find selected project
+    const selectedProject = selectedProjectId && selectedProjectId !== 'none'
+      ? projects.find(p => p.id === selectedProjectId) 
+      : undefined
+
     // Clear previous result before new optimization
     setResult(null)
     clearError()
-    const optimizationResult = await optimize(prompt)
+    const optimizationResult = await optimize(prompt, selectedProject)
     
     if (optimizationResult) {
       setResult(optimizationResult)
-      toast({
-        title: "Prompt Optimized",
-        description: "Your prompt has been successfully optimized!",
-      })
     } else if (error) {
       toast({
         title: "Optimization Failed",
@@ -53,8 +70,6 @@ export function MainContent() {
       } else {
         // Prevent default newline and trigger optimization
         e.preventDefault()
-        // Clear previous result before new optimization
-        setResult(null)
         handleOptimize()
       }
     }
@@ -90,6 +105,35 @@ export function MainContent() {
         <p className="text-xl text-muted-foreground mb-8 text-center max-w-2xl">
           Optimize your LLM prompts for better AI interactions and results
         </p>
+
+        {/* Project Selector */}
+        {projects.length > 0 && (
+          <div className="w-full max-w-4xl mb-6">
+            <div className="flex items-center justify-center gap-3">
+              <FolderOpen className="w-4 h-4 text-muted-foreground" />
+              <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                <SelectTrigger className="w-80 h-10">
+                  <SelectValue placeholder="Select project (optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No project</SelectItem>
+                  {projects.map((project) => (
+                    <SelectItem key={project.id} value={project.id}>
+                      {project.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-center mt-2 h-6">
+              {selectedProjectId && selectedProjectId !== 'none' && (
+                <div className="text-xs text-primary bg-primary/10 px-2 py-1 rounded-full">
+                  Project context will be included in optimization
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Responsive Prompt Input */}
         <div className="w-full max-w-4xl mb-8">
@@ -143,8 +187,8 @@ export function MainContent() {
                 <Button size="sm" onClick={handleCopyOptimized}>
                   Copy Optimized
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setResult(null)}>
-                  Close
+                <Button size="sm" variant="ghost" onClick={() => { setResult(null); setPrompt("") }}>
+                  Clear
                 </Button>
               </div>
             </div>

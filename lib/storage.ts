@@ -94,4 +94,50 @@ export function getEnvironmentStatus(): {
       error: `Error checking environment: ${error}`
     }
   }
+}
+
+export interface Project {
+  id: string
+  name: string
+  description: string
+  language: string
+  techStack: string
+  architecture: string
+  platforms: string
+  customRules: string
+  createdAt: number
+  updatedAt: number
+}
+
+export function enhanceSystemPromptWithProject(basePrompt: string, project: Project): string {
+  const contextLines = [
+    `You are optimizing prompts for the project: "${project.name}"`,
+    `Description: ${project.description}`
+  ]
+  
+  if (project.language.trim()) {
+    contextLines.push(`- Programming Language: ${project.language}`)
+  }
+  if (project.techStack.trim()) {
+    contextLines.push(`- Technology Stack: ${project.techStack}`)
+  }
+  if (project.architecture.trim()) {
+    contextLines.push(`- Architecture Pattern: ${project.architecture}`)
+  }
+  if (project.platforms.trim()) {
+    contextLines.push(`- Target Platforms: ${project.platforms}`)
+  }
+  if (project.customRules.trim()) {
+    contextLines.push(`- Custom Rules: ${project.customRules}`)
+  }
+  
+  const projectContext = `PROJECT CONTEXT:\n${contextLines.join('\n')}\n\n`
+  
+  // Insert project context after the first line (role definition)
+  const lines = basePrompt.split('\n')
+  if (lines.length > 0) {
+    return [lines[0], '', projectContext, ...lines.slice(1)].join('\n')
+  }
+  
+  return projectContext + basePrompt
 } 

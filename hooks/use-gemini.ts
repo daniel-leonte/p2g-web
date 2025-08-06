@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react'
 import { OptimizationRequest, OptimizationResult } from '@/lib/gemini'
-import { loadSettings, DEFAULT_PROMPT } from '@/lib/storage'
+import { loadSettings, DEFAULT_PROMPT, Project, enhanceSystemPromptWithProject } from '@/lib/storage'
 
 interface UseGeminiReturn {
-  optimize: (prompt: string) => Promise<OptimizationResult | null>
+  optimize: (prompt: string, project?: Project) => Promise<OptimizationResult | null>
   isLoading: boolean
   error: string | null
   clearError: () => void
@@ -13,13 +13,19 @@ export function useGemini(): UseGeminiReturn {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const optimize = useCallback(async (prompt: string): Promise<OptimizationResult | null> => {
+  const optimize = useCallback(async (prompt: string, project?: Project): Promise<OptimizationResult | null> => {
     if (!prompt.trim()) {
       setError('Please enter a prompt to optimize.')
       return null
     }
 
     const settings = loadSettings()
+    let systemPrompt = settings.customPrompt || DEFAULT_PROMPT
+    
+    // Enhance system prompt with project context if project is provided
+    if (project) {
+      systemPrompt = enhanceSystemPromptWithProject(systemPrompt, project)
+    }
 
     setIsLoading(true)
     setError(null)
@@ -27,7 +33,7 @@ export function useGemini(): UseGeminiReturn {
     try {
       const request: OptimizationRequest = {
         originalPrompt: prompt,
-        systemPrompt: settings.customPrompt || DEFAULT_PROMPT,
+        systemPrompt,
         prefixText: settings.prefixText || undefined,
         suffixText: settings.suffixText || undefined,
       }
