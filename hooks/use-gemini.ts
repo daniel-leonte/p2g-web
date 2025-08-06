@@ -48,6 +48,20 @@ export function useGemini(): UseGeminiReturn {
 
       if (!response.ok) {
         const errorData = await response.json()
+        
+        // Handle rate limiting specifically
+        if (response.status === 429) {
+          const retryAfter = errorData.retryAfter
+          const retryDate = retryAfter ? new Date(retryAfter) : null
+          const secondsUntilRetry = retryDate 
+            ? Math.ceil((retryDate.getTime() - Date.now()) / 1000)
+            : 60
+          
+          throw new Error(
+            `Too many requests. Please try again in ${secondsUntilRetry} seconds.`
+          )
+        }
+        
         throw new Error(errorData.error || 'Failed to optimize prompt')
       }
 
