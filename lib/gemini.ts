@@ -20,19 +20,22 @@ export async function optimizePrompt(
     throw new Error('Prompt is required')
   }
 
-  // Validate environment variable
+  // Validate environment variables
   const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY
   if (!apiKey?.trim()) {
     console.error('Environment variable GOOGLE_GENERATIVE_AI_API_KEY is not set or empty')
     throw new Error('Google Generative AI API key not configured. Please set GOOGLE_GENERATIVE_AI_API_KEY environment variable.')
   }
 
+  // Get model from environment variable with fallback
+  const modelName = process.env.GOOGLE_GENERATIVE_AI_MODEL || 'gemini-2.0-flash'
+
   try {
     // Create a Google Generative AI instance
     const google = createGoogleGenerativeAI({
       apiKey: apiKey,
     })
-    const model = google('gemini-1.5-flash')
+    const model = google(modelName)
     
     // Send only the core prompt to AI for optimization
     const { text } = await generateText({
@@ -40,7 +43,6 @@ export async function optimizePrompt(
       system: request.systemPrompt,
       prompt: request.originalPrompt,
       temperature: 0.3,
-      maxTokens: 1500,
     })
 
     // Build final result with prefix/suffix appended to optimized prompt

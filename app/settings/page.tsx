@@ -92,7 +92,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-8">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-8 pb-24">
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Settings</h2>
@@ -189,13 +189,14 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        </div>
 
-
-            {/* Action Buttons */}
-            <div className="flex gap-3">
-              <Button onClick={handleSaveChanges}>Save Changes</Button>
-              <Button variant="outline" onClick={handleClearAll}>Clear All</Button>
-            </div>
+        {/* Sticky Action Bar */}
+        <div className="fixed bottom-0 left-0 right-0 lg:left-80 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t border-border px-6 py-4">
+          <div className="flex gap-3">
+            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button variant="outline" onClick={handleClearAll}>Clear All</Button>
           </div>
         </div>
       </div>
