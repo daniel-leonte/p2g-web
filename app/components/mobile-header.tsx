@@ -19,6 +19,7 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         <Menu className="w-6 h-6" />
       </Button>
       
+      {/* Keep only Discord button on mobile header to avoid crowding */}
       <Button 
         variant="ghost" 
         size="sm" 
