@@ -24,9 +24,9 @@ export function MobileHeader({ onMenuClick }: MobileHeaderProps) {
         variant="ghost" 
         size="sm" 
         onClick={handleDiscordClick}
-        className="w-10 h-10 rounded-full hover:bg-purple-500/10 hover:text-purple-400 transition-colors group"
+        className="w-10 h-10 rounded-full text-[#5865F2] transition-colors group"
       >
-        <DiscordIcon className="w-4 h-4 text-muted-foreground group-hover:text-purple-400" />
+        <DiscordIcon className="w-5 h-5 text-[#5865F2]" />
       </Button>
     </div>
   )

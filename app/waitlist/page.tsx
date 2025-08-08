@@ -42,8 +42,19 @@ export default function WaitlistPage() {
     setIsSubmitting(true)
 
     try {
-      // Simulate API call - replace with actual implementation
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const WAITLIST_ID = 30570
+
+      const upstreamRes = await fetch("https://api.getwaitlist.com/api/v1/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ waitlist_id: WAITLIST_ID, email }),
+      })
+
+      if (!upstreamRes.ok) {
+        throw new Error(`HTTP error! status: ${upstreamRes.status}`)
+      }
       
       setIsSubmitted(true)
       toast({
@@ -51,6 +62,7 @@ export default function WaitlistPage() {
         description: "You've been added to our waitlist. We'll be in touch soon!",
       })
     } catch (error) {
+      console.error("Waitlist signup error:", error)
       toast({
         title: "Something went wrong",
         description: "Please try again later.",
@@ -71,7 +83,7 @@ export default function WaitlistPage() {
             </div>
             <CardTitle>You're on the list!</CardTitle>
             <CardDescription>
-              Thanks for joining our waitlist. We'll notify you as soon as new features are available.
+              Thanks for joining our waitlist. We'll notify you as soon as Prompt2Go is officially released.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -98,7 +110,7 @@ export default function WaitlistPage() {
           </div>
           <CardTitle>Join our Waitlist</CardTitle>
           <CardDescription>
-            Be the first to know about new features and updates. We'll keep you posted on our latest developments.
+            Be the first to know when we officially release Prompt2Go.
           </CardDescription>
         </CardHeader>
         <CardContent>
