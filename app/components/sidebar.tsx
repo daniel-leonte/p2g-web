@@ -11,6 +11,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react"
+import { DiscordIcon } from "@/components/ui/discord-icon"
 
 interface SidebarProps {
   onClose?: () => void
@@ -57,6 +58,11 @@ export function Sidebar({ onClose }: SidebarProps) {
     }
   }
 
+  const handleDiscordClick = () => {
+    window.open('https://discord.gg/tm6339Ps', '_blank', 'noopener,noreferrer')
+    if (onClose) onClose()
+  }
+
   return (
     <div className={`${shouldShowCollapsed ? 'w-16' : 'w-80'} h-full bg-sidebar border-r border-sidebar-border flex flex-col transition-all duration-300 ease-in-out`}>
       {/* Header */}
@@ -91,6 +97,24 @@ export function Sidebar({ onClose }: SidebarProps) {
           )
         })}
       </div>
+
+      {/* Discord Community Button - Desktop Only */}
+      {!isMobile && (
+        <div className="px-4 pb-2">
+          <Button
+            variant="ghost"
+            onClick={handleDiscordClick}
+            className={`w-full ${shouldShowCollapsed ? 'justify-center p-0 h-10' : 'justify-start gap-3 h-10'} rounded-full hover:bg-purple-500/10 hover:text-purple-400 transition-colors group`}
+          >
+            <DiscordIcon className={`w-5 h-5 text-purple-400 group-hover:text-purple-300`} />
+            {!shouldShowCollapsed && (
+              <span className="text-sidebar-foreground group-hover:text-purple-300 text-sm">
+                Join Community
+              </span>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Bottom Toggle Button */}
       {!isMobile && (

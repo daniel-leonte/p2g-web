@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -10,6 +11,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useSessionStorage } from "@/hooks/use-session-storage"
 import { OptimizationResult } from "@/lib/gemini"
 import { Project } from "@/lib/storage"
+import { FormattedText } from "@/components/ui/formatted-text"
 
 export function MainContent() {
   const [prompt, setPrompt] = useSessionStorage('prompt2go-current-prompt', "")
@@ -92,12 +94,13 @@ export function MainContent() {
       <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-12">
-          <div className="w-12 h-12 bg-primary-foreground rounded-full flex items-center justify-center">
-            <div className="w-10 h-10 bg-primary rounded-full relative">
-              <div className="absolute inset-1 border-2 border-primary-foreground rounded-full" />
-              <div className="absolute top-2 left-2 w-2 h-4 bg-primary-foreground transform rotate-45" />
-            </div>
-          </div>
+          <Image
+            src="/promt2go-icon.png"
+            alt="Prompt2Go Logo"
+            width={48}
+            height={48}
+            className="w-12 h-12 rounded-lg"
+          />
           <h1 className="text-4xl lg:text-5xl font-bold text-foreground">Prompt2Go</h1>
         </div>
 
@@ -180,7 +183,7 @@ export function MainContent() {
               
               <div className="bg-primary/5 p-4 rounded-2xl lg:rounded-3xl border border-primary/20">
                 <p className="text-sm font-medium text-primary mb-2">Optimized:</p>
-                <p className="text-sm">{result.optimizedPrompt}</p>
+                <FormattedText className="text-sm">{result.optimizedPrompt}</FormattedText>
               </div>
               
               <div className="flex gap-2">
