@@ -92,7 +92,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 lg:p-8 pb-24">
+        <div className="flex-1 overflow-y-auto p-6 lg:p-8 pb-24 md:pb-32 lg:pb-40 xl:pb-48">
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Settings</h2>

@@ -23,37 +23,47 @@ This is a **prototype** Next.js 15 web application for LLM prompt optimization w
 ### Core Structure
 - **App Router**: Uses Next.js 15 app router structure (`app/` directory)
 - **UI Components**: Built with Radix UI primitives and Tailwind CSS
-- **Styling**: Tailwind CSS with dark theme as default (forced dark mode)
-- **State Management**: React hooks with localStorage persistence for projects and settings
+- **Styling**: Tailwind CSS with dark theme as default (forced dark mode via ThemeProvider)
+- **State Management**: React hooks with localStorage/sessionStorage persistence
 - **AI Integration**: Google Generative AI integration for prompt optimization
+- **Rate Limiting**: Upstash Redis-based rate limiting with graceful fallback
 
 ### Key Directories
 - `app/` - Next.js app router pages and API routes
 - `components/ui/` - Reusable UI components (Radix UI + Tailwind)
 - `lib/` - Utility functions and API client code
-- `hooks/` - Custom React hooks
+- `hooks/` - Custom React hooks for storage, mobile detection, and AI interaction
 
 ### Layout Architecture
-- Responsive design with collapsible sidebar
+- Responsive design with collapsible sidebar managed by pre-hydration script in `app/layout.tsx:23-36`
 - Mobile-first approach with overlay sidebar on mobile
 - Desktop sidebar with localStorage persistence of collapsed state
-- Pre-hydration script prevents sidebar flash
+- Pre-hydration script prevents sidebar flash by setting `data-sidebar-collapsed` attribute
+- Theme provider forces dark mode with `forcedTheme="dark"`
 
 ### Data Management
-- Project data stored in localStorage using custom storage utilities
-- Projects have metadata: name, description, language, tech stack, architecture, platforms, custom rules
-- CRUD operations handled through custom localStorage utilities in dashboard
+- **Project Storage**: localStorage-based persistence in `lib/storage.ts` with type-safe interfaces
+- **Settings Storage**: Customizable system prompts, prefix/suffix text stored in localStorage
+- **Project Structure**: Projects contain metadata (name, description, language, tech stack, architecture, platforms, custom rules)
+- **Enhanced Prompts**: System prompts are dynamically enhanced with project context via `enhanceSystemPromptWithProject()`
 
-### AI Integration
-- Google Generative AI integration in `lib/gemini.ts`
-- Uses simple API key authentication for centralized deployment configuration
-- Prompt optimization with system prompts, prefix/suffix support
-- Error handling for API key validation, rate limits, and network issues
-- No user-level AI configuration required
-- Compatible with Google Vertex AI for enterprise deployments
+### AI Integration & Rate Limiting
+- **Google Generative AI**: Integration in `lib/gemini.ts` using `@ai-sdk/google` and `ai` packages
+- **Model Configuration**: Uses `gemini-2.0-flash` model by default, configurable via `GOOGLE_GENERATIVE_AI_MODEL` env var
+- **Error Handling**: Comprehensive error handling for API key validation, billing, quotas, and network issues
+- **Rate Limiting**: Middleware-based rate limiting (20 requests/hour per IP) using Upstash Redis
+- **Graceful Fallback**: Rate limiting disables gracefully if Redis is not configured
+- **API Endpoint**: Single `/api/optimize/route.ts` endpoint handles all prompt optimization requests
+
+### Environment Configuration
+- **Required**: `GOOGLE_GENERATIVE_AI_API_KEY` for AI functionality
+- **Optional**: `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` for rate limiting
+- **Optional**: `GOOGLE_GENERATIVE_AI_MODEL` to override default model
+- **Optional**: `RATE_LIMIT_REQUESTS_PER_HOUR` to configure rate limit (defaults to 20)
 
 ### Component Patterns
-- Consistent use of Radix UI primitives
+- Extensive use of Radix UI primitives for consistent design system
 - Form validation with error state management
 - Dialog-based modals for project creation/editing
 - Card-based layouts for project display
+- Custom hooks pattern for localStorage/sessionStorage operations

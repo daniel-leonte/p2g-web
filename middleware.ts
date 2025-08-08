@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { checkRateLimit, getIP } from '@/lib/rate-limit'
+import { checkRateLimit, getIP, RATE_LIMIT_REQUESTS_PER_HOUR } from '@/lib/rate-limit'
 
 export async function middleware(request: NextRequest) {
   // Only rate limit the optimize API endpoint
@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
         { 
           status: 429,
           headers: {
-            'X-RateLimit-Limit': '20',
+            'X-RateLimit-Limit': RATE_LIMIT_REQUESTS_PER_HOUR.toString(),
             'X-RateLimit-Remaining': '0',
             'X-RateLimit-Reset': reset.toISOString(),
             'Retry-After': Math.floor((reset.getTime() - Date.now()) / 1000).toString()
@@ -28,7 +28,7 @@ export async function middleware(request: NextRequest) {
 
     // Add rate limit headers to successful requests
     const response = NextResponse.next()
-    response.headers.set('X-RateLimit-Limit', '20')
+    response.headers.set('X-RateLimit-Limit', RATE_LIMIT_REQUESTS_PER_HOUR.toString())
     response.headers.set('X-RateLimit-Remaining', remaining.toString())
     response.headers.set('X-RateLimit-Reset', reset.toISOString())
     

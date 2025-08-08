@@ -1,6 +1,12 @@
 import { Ratelimit } from '@upstash/ratelimit'
 import { Redis } from '@upstash/redis'
 
+// Get rate limit value from environment variable with fallback to 20
+export const RATE_LIMIT_REQUESTS_PER_HOUR = parseInt(
+  process.env.RATE_LIMIT_REQUESTS_PER_HOUR || '20',
+  10
+)
+
 // Create Redis client - will use env vars UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
 let redis: Redis | null = null
 let rateLimiter: Ratelimit | null = null
@@ -10,10 +16,10 @@ try {
   if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
     redis = Redis.fromEnv()
     
-    // Simple rate limiter: 20 requests per hour per IP
+    // Configurable rate limiter: X requests per hour per IP (default: 20)
     rateLimiter = new Ratelimit({
       redis,
-      limiter: Ratelimit.slidingWindow(20, '1 h'),
+      limiter: Ratelimit.slidingWindow(RATE_LIMIT_REQUESTS_PER_HOUR, '1 h'),
       analytics: true,
       prefix: '@upstash/ratelimit',
     })
