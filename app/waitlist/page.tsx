@@ -6,8 +6,11 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, CheckCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { Sidebar } from "../components/sidebar"
+import { MobileHeader } from "../components/mobile-header"
 
 export default function WaitlistPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -58,9 +61,9 @@ export default function WaitlistPage() {
     }
   }
 
-  if (isSubmitted) {
-    return (
-      <div className="flex-1 flex items-center justify-center p-6">
+  const renderWaitlistCard = () => {
+    if (isSubmitted) {
+      return (
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
@@ -84,12 +87,10 @@ export default function WaitlistPage() {
             </Button>
           </CardContent>
         </Card>
-      </div>
-    )
-  }
+      )
+    }
 
-  return (
-    <div className="flex-1 flex items-center justify-center p-6">
+    return (
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
@@ -122,6 +123,38 @@ export default function WaitlistPage() {
           </form>
         </CardContent>
       </Card>
+    )
+  }
+
+  return (
+    <div className="flex h-screen bg-background">
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <div className="relative w-80 h-full">
+            <Sidebar onClose={() => setSidebarOpen(false)} />
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className="lg:hidden">
+          <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
+        </div>
+
+        {/* Waitlist Content */}
+        <div className="flex-1 flex items-center justify-center p-6">
+          {renderWaitlistCard()}
+        </div>
+      </div>
     </div>
   )
 }
