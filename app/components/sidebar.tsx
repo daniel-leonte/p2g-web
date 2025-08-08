@@ -9,7 +9,9 @@ import {
   LayoutDashboard, 
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Mail,
+  Apple
 } from "lucide-react"
 import { DiscordIcon } from "@/components/ui/discord-icon"
 
@@ -45,6 +47,7 @@ export function Sidebar({ onClose }: SidebarProps) {
     { name: "Optimize Prompt", icon: Sparkles, path: "/" },
     { name: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
     { name: "Settings", icon: Settings, path: "/settings" },
+    { name: "Join Waitlist", icon: Mail, path: "/waitlist" },
   ]
 
   const handleNavigation = (path: string) => {
@@ -60,6 +63,11 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   const handleDiscordClick = () => {
     window.open('https://discord.gg/tm6339Ps', '_blank', 'noopener,noreferrer')
+    if (onClose) onClose()
+  }
+
+  const handleTryOnMacClick = () => {
+    window.open('https://testflight.apple.com/join/Pg9Kx5nv', '_blank', 'noopener,noreferrer')
     if (onClose) onClose()
   }
 
@@ -98,23 +106,55 @@ export function Sidebar({ onClose }: SidebarProps) {
         })}
       </div>
 
-      {/* Discord Community Button - Desktop Only */}
-      {!isMobile && (
-        <div className="px-4 pb-2">
-          <Button
-            variant="ghost"
-            onClick={handleDiscordClick}
-            className={`w-full ${shouldShowCollapsed ? 'justify-center p-0 h-10' : 'justify-start gap-3 h-10'} rounded-full hover:bg-purple-500/10 hover:text-purple-400 transition-colors group`}
-          >
-            <DiscordIcon className={`w-5 h-5 text-purple-400 group-hover:text-purple-300`} />
-            {!shouldShowCollapsed && (
-              <span className="text-sidebar-foreground group-hover:text-purple-300 text-sm">
-                Join Community
+      {/* Action Buttons */}
+      <div className="px-4 pb-2">
+        {isMobile ? (
+          // Mobile: Try on Mac button at bottom
+          <div className="space-y-2">
+            <Button
+              variant="ghost"
+              onClick={handleTryOnMacClick}
+              className="w-full justify-start gap-3 h-10 mb-2 rounded-full hover:bg-blue-500/10 hover:text-blue-400 transition-colors group"
+            >
+              <Apple className="w-5 h-5 text-blue-400 group-hover:text-blue-300" />
+              <span className="text-sidebar-foreground group-hover:text-blue-300 text-sm">
+                Try on macOS
               </span>
-            )}
-          </Button>
-        </div>
-      )}
+            </Button>
+          </div>
+        ) : (
+          // Desktop: Both buttons stacked
+          <div className="space-y-2">
+            {/* Try on Mac Button */}
+            <Button
+              variant="ghost"
+              onClick={handleTryOnMacClick}
+              className={`w-full ${shouldShowCollapsed ? 'justify-center p-0 h-10' : 'justify-start gap-3 h-10'} rounded-full hover:bg-blue-500/10 hover:text-blue-400 transition-colors group`}
+            >
+              <Apple className={`w-5 h-5 text-blue-400 group-hover:text-blue-300`} />
+              {!shouldShowCollapsed && (
+                <span className="text-sidebar-foreground group-hover:text-blue-300 text-sm">
+                  Try on macOS
+                </span>
+              )}
+            </Button>
+            
+            {/* Discord Community Button */}
+            <Button
+              variant="ghost"
+              onClick={handleDiscordClick}
+              className={`w-full ${shouldShowCollapsed ? 'justify-center p-0 h-10' : 'justify-start gap-3 h-10'} rounded-full hover:bg-[rgb(88,101,242)]/10 hover:text-[rgb(88,101,242)] transition-colors group`}
+            >
+              <DiscordIcon className={`w-5 h-5 text-[#5865F2] group-hover:text-[#7A86F8]`} />
+              {!shouldShowCollapsed && (
+                <span className="text-sidebar-foreground group-hover:text-[#7A86F8] text-sm">
+                  Join Community
+                </span>
+              )}
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Bottom Toggle Button */}
       {!isMobile && (
