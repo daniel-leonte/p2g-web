@@ -101,3 +101,5 @@ Thumbs.db
 
 # Contentlayer
 .contentlayer
+
+*.local.md

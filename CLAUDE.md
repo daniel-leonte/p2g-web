@@ -67,3 +67,26 @@ This is a **prototype** Next.js 15 web application for LLM prompt optimization w
 - Dialog-based modals for project creation/editing
 - Card-based layouts for project display
 - Custom hooks pattern for localStorage/sessionStorage operations
+
+## Additional Development Information
+
+### Testing
+- No formal test framework is currently configured
+- Manual testing through the development server is the primary approach
+- Check specific functionality through the debug endpoints in `app/api/debug-*`
+
+### Project Management Features
+- Projects stored in localStorage with metadata (name, description, language, tech stack, architecture, platforms, custom rules)
+- Project data managed through `lib/storage.ts` with type-safe interfaces
+- Project context automatically injected into prompt optimization via `enhanceSystemPromptWithProject()`
+
+### Debugging & Development
+- Debug endpoints available at `/api/debug-env`, `/api/debug-google`, `/api/env-check`, `/api/test-gemini`
+- Environment validation functions in `lib/storage.ts` for API key checking
+- Comprehensive error handling with user-friendly messages for common Google AI API issues
+
+### Middleware & Rate Limiting
+- Rate limiting implemented via Next.js middleware in `middleware.ts`
+- Only applies to `/api/optimize` endpoint
+- Graceful fallback when Redis is not configured (allows all requests)
+- Rate limit headers included in responses for client-side handling
