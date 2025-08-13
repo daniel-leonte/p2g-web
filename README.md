@@ -2,6 +2,8 @@
 
 A modern web application for optimizing LLM prompts with project management capabilities. Built with Next.js 15, TypeScript, and Google Generative AI.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit-brightgreen)](https://p2g-web.vercel.app/)
+
 ## Features
 
 - **AI-Powered Prompt Optimization** - Transform basic prompts into structured, effective LLM prompts
