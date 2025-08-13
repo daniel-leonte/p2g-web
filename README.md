@@ -2,7 +2,7 @@
 
 A modern web application for optimizing LLM prompts with project management capabilities. Built with Next.js 15, TypeScript, and Google Generative AI.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit-brightgreen)](https://p2g-web.vercel.app/)
+<a href="https://p2g-web.vercel.app/" target="_blank" rel="noopener noreferrer">Live Demo</a>
 
 ## Features
 
